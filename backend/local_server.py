@@ -54,7 +54,7 @@ class Handler(BaseHTTPRequestHandler):
             self.json_response(flatten_latest("cis_results"))
         elif path == "/scan-runs":
             self.json_response(load_store().get("scan_runs", []))
-        elif path == "/" or path.startswith("/app"):
+        elif path == "/":
             self.serve_static("index.html")
         else:
             static_path = path.lstrip("/")

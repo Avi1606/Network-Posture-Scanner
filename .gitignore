@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
 .venv/
+.idea/
 results/backend_store.json
 results/test_scan*.json
