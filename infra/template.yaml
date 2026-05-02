@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Network Posture Scanner API Gateway, Lambda, and DynamoDB backend.
+
+Parameters:
+  ApiKey:
+    Type: String
+    Default: CHANGE_ME
+    NoEcho: true
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 15
+    MemorySize: 256
+
+Resources:
+  ScanTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ..
+      Handler: backend.lambda_handler.lambda_handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ScanTable
+          API_KEY: !Ref ApiKey
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ScanTable
+      Events:
+        Ingest:
+          Type: HttpApi
+          Properties:
+            Path: /ingest
+            Method: POST
+        Devices:
+          Type: HttpApi
+          Properties:
+            Path: /devices
+            Method: GET
+        FirewallRules:
+          Type: HttpApi
+          Properties:
+            Path: /firewall-rules
+            Method: GET
+        CisResults:
+          Type: HttpApi
+          Properties:
+            Path: /cis-results
+            Method: GET
+        ScanRuns:
+          Type: HttpApi
+          Properties:
+            Path: /scan-runs
+            Method: GET
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway base URL
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com"

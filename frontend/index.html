@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Network Posture Scanner</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Network Posture Scanner</h1>
+        <p id="subtitle">Discovery, firewall rules, and CIS benchmark evidence</p>
+      </div>
+      <button id="refreshButton" type="button">Refresh</button>
+    </header>
+
+    <main>
+      <section class="metrics" aria-label="Summary metrics">
+        <div>
+          <span>Devices</span>
+          <strong id="deviceCount">0</strong>
+        </div>
+        <div>
+          <span>Firewall Rules</span>
+          <strong id="ruleCount">0</strong>
+        </div>
+        <div>
+          <span>Checks Passed</span>
+          <strong id="passedCount">0</strong>
+        </div>
+        <div>
+          <span>Checks Failed</span>
+          <strong id="failedCount">0</strong>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">
+          <h2>Discovered Devices</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>Hostname</th>
+                <th>MAC Vendor</th>
+                <th>Open Ports and Services</th>
+              </tr>
+            </thead>
+            <tbody id="devicesTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">
+          <h2>Firewall Rules</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Direction</th>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Protocol</th>
+                <th>Port</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="rulesTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-heading">
+          <h2>CIS Benchmark Results</h2>
+        </div>
+        <div id="checksGrid" class="checks-grid"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

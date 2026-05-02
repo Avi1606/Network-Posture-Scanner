@@ -1,0 +1,223 @@
+{
+  "scan_id": "scan-2026-05-01T05:41:51.025105+00:00",
+  "generated_at": "2026-05-01T05:41:51.025105+00:00",
+  "scanner": {
+    "method": "TCP connect scan",
+    "ports": [
+      21,
+      22,
+      23,
+      25,
+      53,
+      80,
+      110,
+      135,
+      139,
+      143,
+      161,
+      389,
+      443,
+      445,
+      3306,
+      3389,
+      5432,
+      5900,
+      8080
+    ],
+    "targets": [
+      "127.0.0.1"
+    ],
+    "nonresponsive_hosts": []
+  },
+  "devices": [
+    {
+      "ip": "127.0.0.1",
+      "hostname": "checkhost.local",
+      "mac": null,
+      "mac_vendor": null,
+      "reachable": true,
+      "open_ports": [
+        {
+          "port": 135,
+          "service": "MS-RPC",
+          "banner": null
+        },
+        {
+          "port": 445,
+          "service": "SMB",
+          "banner": null
+        },
+        {
+          "port": 3306,
+          "service": "MySQL",
+          "banner": "J\u0000\u0000\u0000\n8.0.44\u0000\f\u0000\u0000\u0000*sWg\u0007\u0012Ol\u0000\ufffd\ufffd\ufffd\u0002\u0000\ufffd\ufffd\u0015\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0015\u0001\u0013~lO]IC\u001edf\u0000caching_sha2_password\u0000"
+        },
+        {
+          "port": 5432,
+          "service": "PostgreSQL",
+          "banner": null
+        }
+      ]
+    }
+  ],
+  "firewall_rules": [
+    {
+      "source": "0.0.0.0/0",
+      "destination": "0.0.0.0/0",
+      "protocol": "tcp",
+      "port": 22,
+      "action": "allow",
+      "direction": "ingress",
+      "evidence": "ip access-list extended OUTSIDE_IN permit tcp any any eq 22"
+    },
+    {
+      "source": "0.0.0.0/0",
+      "destination": "0.0.0.0/0",
+      "protocol": "tcp",
+      "port": 23,
+      "action": "allow",
+      "direction": "ingress",
+      "evidence": "ip access-list extended OUTSIDE_IN permit tcp any any eq 23"
+    },
+    {
+      "source": "0.0.0.0/0",
+      "destination": "0.0.0.0/0",
+      "protocol": "tcp",
+      "port": 80,
+      "action": "allow",
+      "direction": "ingress",
+      "evidence": "ip access-list extended OUTSIDE_IN permit tcp any any eq 80"
+    },
+    {
+      "source": "0.0.0.0/0",
+      "destination": "0.0.0.0/0",
+      "protocol": "tcp",
+      "port": 3389,
+      "action": "allow",
+      "direction": "ingress",
+      "evidence": "ip access-list extended OUTSIDE_IN permit tcp any any eq 3389"
+    },
+    {
+      "source": "0.0.0.0/0",
+      "destination": "0.0.0.0/0",
+      "protocol": "ip",
+      "port": "any",
+      "action": "deny",
+      "direction": "ingress",
+      "evidence": "ip access-list extended OUTSIDE_IN deny ip any any log"
+    },
+    {
+      "source": "0.0.0.0/0",
+      "destination": "0.0.0.0/0",
+      "protocol": "ip",
+      "port": "any",
+      "action": "allow",
+      "direction": "egress",
+      "evidence": "ip access-list extended OUTBOUND permit ip any any"
+    }
+  ],
+  "firewall_metadata": {
+    "snmp_communities": [
+      "public",
+      "netopsSecure"
+    ],
+    "logging_hosts": [
+      "10.0.0.50"
+    ],
+    "http_server_enabled": true,
+    "ssh_transport_configured": true
+  },
+  "cis_results": [
+    {
+      "check_id": "CIS-NET-001",
+      "title": "No insecure management protocols exposed",
+      "cis_control": "CIS Controls v8 4.8, 12.3",
+      "status": "fail",
+      "evidence": [
+        "ip access-list extended OUTSIDE_IN permit tcp any any eq 23",
+        "ip access-list extended OUTSIDE_IN permit tcp any any eq 80"
+      ],
+      "recommendation": "Disable Telnet, FTP, HTTP management, and SNMPv1/v2c. Prefer SSH/HTTPS with strong auth."
+    },
+    {
+      "check_id": "CIS-NET-002",
+      "title": "SSH is restricted to a management subnet",
+      "cis_control": "CIS Controls v8 6.6, 12.8",
+      "status": "fail",
+      "evidence": [
+        "ip access-list extended OUTSIDE_IN permit tcp any any eq 22"
+      ],
+      "recommendation": "Limit SSH ingress to a dedicated management subnet or VPN range."
+    },
+    {
+      "check_id": "CIS-NET-003",
+      "title": "Default or weak SNMP communities are not used",
+      "cis_control": "CIS Controls v8 4.1, 12.3",
+      "status": "fail",
+      "evidence": [
+        "SNMP community \"public\" configured"
+      ],
+      "recommendation": "Remove default SNMP communities and use SNMPv3 with unique credentials."
+    },
+    {
+      "check_id": "CIS-NET-004",
+      "title": "Sensitive ports are not exposed to the internet",
+      "cis_control": "CIS Controls v8 12.2, 13.3",
+      "status": "fail",
+      "evidence": [
+        "ip access-list extended OUTSIDE_IN permit tcp any any eq 22",
+        "ip access-list extended OUTSIDE_IN permit tcp any any eq 23",
+        "ip access-list extended OUTSIDE_IN permit tcp any any eq 3389"
+      ],
+      "recommendation": "Remove 0.0.0.0/0 ingress to SSH, Telnet, RDP, SMB, and database ports."
+    },
+    {
+      "check_id": "CIS-NET-005",
+      "title": "Egress traffic is filtered",
+      "cis_control": "CIS Controls v8 12.2, 13.7",
+      "status": "fail",
+      "evidence": [
+        "ip access-list extended OUTBOUND permit ip any any"
+      ],
+      "recommendation": "Use default-deny outbound and allow only required destinations and ports."
+    },
+    {
+      "check_id": "CIS-NET-006",
+      "title": "Remote logging/syslog is enabled",
+      "cis_control": "CIS Controls v8 8.2, 8.9",
+      "status": "pass",
+      "evidence": [
+        "Logging host: 10.0.0.50"
+      ],
+      "recommendation": "Forward logs to a remote collector or SIEM."
+    },
+    {
+      "check_id": "CIS-NET-007",
+      "title": "Default-deny inbound posture exists",
+      "cis_control": "CIS Controls v8 4.4, 12.2",
+      "status": "pass",
+      "evidence": [
+        "ip access-list extended OUTSIDE_IN deny ip any any log"
+      ],
+      "recommendation": "Add an explicit final deny rule and only permit required inbound traffic."
+    },
+    {
+      "check_id": "CIS-NET-008",
+      "title": "Unencrypted HTTP management is disabled",
+      "cis_control": "CIS Controls v8 3.10, 12.3",
+      "status": "fail",
+      "evidence": [
+        "Config contains: ip http server",
+        "ip access-list extended OUTSIDE_IN permit tcp any any eq 80"
+      ],
+      "recommendation": "Disable HTTP management and use HTTPS or SSH from trusted management networks."
+    }
+  ],
+  "summary": {
+    "target_count": 1,
+    "responsive_count": 1,
+    "rule_count": 6,
+    "checks_passed": 2,
+    "checks_failed": 6
+  }
+}
